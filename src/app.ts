@@ -11,5 +11,6 @@ app.post("/users", userController.signUp);
 
 app.post("/questions", questionController.createQuestion);
 app.get("/questions/:id", questionController.findQuestionByID);
+app.get("/questions", questionController.findClearQuestions);
 
 export default app;

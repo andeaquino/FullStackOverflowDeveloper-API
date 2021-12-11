@@ -39,4 +39,16 @@ async function findQuestionByID(req: Request, res: Response) {
   }
 }
 
-export { createQuestion, findQuestionByID };
+async function findClearQuestions(req: Request, res: Response) {
+
+  try {
+    const questions = await questionRespository.findClearQuestions();
+      
+    res.send(questions);
+  } catch (e) {
+    console.log(e);
+    res.sendStatus(500);
+  }
+}
+
+export { createQuestion, findQuestionByID, findClearQuestions };

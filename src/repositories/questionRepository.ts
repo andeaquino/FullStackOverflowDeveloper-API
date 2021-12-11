@@ -53,10 +53,10 @@ async function findQuestionByID(id: number): Promise<Question> {
     return result.rows[0];
 }
 
-async function getClearQuestions(): Promise<Question[]> {
+async function findClearQuestions(): Promise<Question[]> {
     const result = await connection.query(`SELECT * FROM questions WHERE answer_id=null`);
 
     return result.rows;
 }
 
-export { createQuestion, findQuestionByID, getClearQuestions };
+export { createQuestion, findQuestionByID, findClearQuestions };
