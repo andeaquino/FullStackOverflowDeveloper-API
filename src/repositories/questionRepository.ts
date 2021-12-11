@@ -9,6 +9,7 @@ interface CreateQuestion {
 
 interface Question extends Omit<CreateQuestion, 'group'> {
     id: number;
+    class: string;
     answered: boolean;
     submitAt: string;
     answeredAt?: string;
@@ -58,4 +59,4 @@ async function getClearQuestions(): Promise<Question[]> {
     return result.rows;
 }
 
-export {createQuestion}
+export { createQuestion, findQuestionByID, getClearQuestions };
