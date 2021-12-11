@@ -27,4 +27,35 @@ async function createQuestion(questionInfo: CreateQuestion): Promise<number> {
     return result.rows[0].id;
 }
 
+async function findQuestionByID(id: number): Promise<Question> {
+    const result = await connection.query(`
+        SELECT
+        questions.*,
+        answers."answeredAt",
+        answers.answer,
+        users.name AS "answeredBy"
+        FROM questions
+        JOIN answers
+            ON answers.id = questions.answer_id
+        JOIN users
+            ON users.id = answers.user_id
+        WHERE questions.id=$1`,
+        [id]
+    );
+
+    if (result.rows[0].answer_id) {
+        result.rows[0].answered = true;
+    } else {
+        result.rows[0].answered = false;
+    }
+
+    return result.rows[0];
+}
+
+async function getClearQuestions(): Promise<Question[]> {
+    const result = await connection.query(`SELECT * FROM questions WHERE answer_id=null`);
+
+    return result.rows;
+}
+
 export {createQuestion}
