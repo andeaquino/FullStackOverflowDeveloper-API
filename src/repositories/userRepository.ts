@@ -2,11 +2,12 @@ import connection from "../database";
 
 interface CreateUser {
     name: string;
-    class: string;
+    group: string;
 }
 
-interface User extends CreateUser {
+interface User extends Omit<CreateUser, 'group'> {
     id: number;
+    class: string;
 }
 
 async function findById(id: number): Promise<User> {
@@ -16,9 +17,10 @@ async function findById(id: number): Promise<User> {
 }
 
 async function createUser(user: CreateUser): Promise<User> {
+    const {name, group} = user
     const result = await connection.query(
         `INSERT INTO users (name, class) VALUES ($1, $2) RETURNING *`,
-        [user.name, user.class]
+        [name, group]
     );
 
     return result.rows[0];

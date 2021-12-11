@@ -3,7 +3,7 @@ import * as userRepository from "../repositories/userRepository";
 
 interface User {
     name: string;
-    class: string;
+    group: string;
 }
 
 async function createUser(user: User) {
@@ -17,7 +17,7 @@ async function createUser(user: User) {
     process.env.JWT_SECRET
     );
     
-    return { token };
+    return  token;
 }
 
 export { createUser };
