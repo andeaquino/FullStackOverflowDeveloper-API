@@ -10,5 +10,6 @@ app.use(cors());
 app.post("/users", userController.signUp);
 
 app.post("/questions", questionController.createQuestion);
+app.get("/questions/:id", questionController.findQuestionByID);
 
 export default app;

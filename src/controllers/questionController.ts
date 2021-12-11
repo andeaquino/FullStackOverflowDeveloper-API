@@ -21,4 +21,22 @@ async function createQuestion(req: Request, res: Response) {
   }
 }
 
-export { createQuestion };
+async function findQuestionByID(req: Request, res: Response) {
+
+  try {
+    const id  = Number(req.params.id);
+
+    const question = await questionRespository.findQuestionByID(id);
+      
+    if (question === null) {
+      return res.sendStatus(404);
+    }
+
+    res.send(question);
+  } catch (e) {
+    console.log(e);
+    res.sendStatus(500);
+  }
+}
+
+export { createQuestion, findQuestionByID };
