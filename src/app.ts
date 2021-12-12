@@ -2,6 +2,7 @@ import express from "express";
 import cors from "cors";
 import * as userController from "./controllers/userController";
 import * as questionController from "./controllers/questionController";
+import auth from "./middleware/auth";
 
 const app = express();
 app.use(express.json());
@@ -11,6 +12,7 @@ app.post("/users", userController.signUp);
 
 app.post("/questions", questionController.createQuestion);
 app.get("/questions/:id", questionController.findQuestionByID);
-app.get("/questions", questionController.findClearQuestions);
+app.post("/questions/:id", questionController.answerQuestion);
+app.get("/questions", auth, questionController.findClearQuestions);
 
 export default app;

@@ -1,6 +1,10 @@
 import { Request, Response } from "express";
 import * as questionRespository from "../repositories/questionRepository";
 
+interface UserInfoRequest extends Request {
+    userId: number;
+}
+
 async function createQuestion(req: Request, res: Response) {
 
   try {
@@ -39,6 +43,22 @@ async function findQuestionByID(req: Request, res: Response) {
   }
 }
 
+async function answerQuestion(req: UserInfoRequest, res: Response) {
+    try {
+        const userId = req.userId;
+        const questionId = Number(req.params.id);
+        const answer = req.body;
+         
+        if (!answer) return res.sendStatus(400);
+
+        await questionRespository.answerQuestion(userId, questionId, answer)
+        res.sendStatus(200);
+    } catch (e) {
+        console.log(e);
+        res.sendStatus(500);
+    }
+}
+
 async function findClearQuestions(req: Request, res: Response) {
 
   try {
@@ -51,4 +71,4 @@ async function findClearQuestions(req: Request, res: Response) {
   }
 }
 
-export { createQuestion, findQuestionByID, findClearQuestions };
+export { createQuestion, findQuestionByID, findClearQuestions, answerQuestion };

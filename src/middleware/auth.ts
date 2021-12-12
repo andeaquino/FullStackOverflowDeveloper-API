@@ -2,7 +2,7 @@ import jwt from "jsonwebtoken";
 import { Request, Response, NextFunction } from "express";
 
 interface UserInfoRequest extends Request {
-    user: number;
+    userId: number;
 }
 
 async function auth(req: UserInfoRequest, res: Response, next: NextFunction) {
@@ -14,7 +14,7 @@ async function auth(req: UserInfoRequest, res: Response, next: NextFunction) {
   jwt.verify(token, secretKey, function (err, decoded) {
     if (err) return res.status(500).send("Failed to authenticate token");
 
-    req.user = decoded.user;
+    req.userId = decoded.user;
     next();
   });
 }
