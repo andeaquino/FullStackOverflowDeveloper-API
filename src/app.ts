@@ -12,7 +12,7 @@ app.post("/users", userController.signUp);
 
 app.post("/questions", questionController.createQuestion);
 app.get("/questions/:id", questionController.findQuestionByID);
-app.post("/questions/:id", questionController.answerQuestion);
-app.get("/questions", auth, questionController.findClearQuestions);
+app.post("/questions/:id", auth, questionController.answerQuestion);
+app.get("/questions", questionController.findClearQuestions);
 
 export default app;

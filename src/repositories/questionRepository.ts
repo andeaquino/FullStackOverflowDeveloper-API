@@ -21,25 +21,53 @@ async function createQuestion(questionInfo: CreateQuestion): Promise<number> {
     const { question, student, group, tags } = questionInfo;
 
     const result = await connection.query(`
-        INSERT INTO questions (question, student, class, tags, answered, submitAt) VALUES ($1, $2, $3, $4, false, NOW()) RETURNING id`,
+        INSERT INTO questions (question, student, class, tags, answered, "submitAt") VALUES ($1, $2, $3, $4, false, NOW()) RETURNING id`,
         [question, student, group, tags]
     );
 
     return result.rows[0].id;
 }
 
-async function findQuestionByID(id: number): Promise<Question> {
+async function isQuestionAnswered(id: number): Promise<boolean> {
     const result = await connection.query(`
-        SELECT
-        questions.*,
-        users.name AS "answeredBy"
-        FROM questions
-        JOIN users
-        ON users.id = questions."answeredBy"
-        WHERE questions.id = $1`,
+        SELECT * FROM questions WHERE id = $1`,
         [id]
     );
 
+    if (result.rows[0].answered) {
+        return true;
+    }
+    return false;
+}
+
+async function findQuestionByID(id: number): Promise<Question> {
+    const isAnswered = await isQuestionAnswered(id);
+    if (isAnswered) {
+        const result = await connection.query(`
+            SELECT
+            questions.*,
+            users.name AS "answeredBy"
+            FROM questions
+            JOIN users
+            ON users.id = questions."answeredBy"
+            WHERE questions.id = $1`,
+            [id]
+        );
+        return result.rows[0];
+    }
+    
+    const result = await connection.query(`
+        SELECT
+        id,
+        question,
+        student,
+        class,
+        tags,
+        answered,
+        "submitAt"
+        FROM questions WHERE id = $1`,
+        [id]
+    );
     return result.rows[0];
 }
 
@@ -56,7 +84,16 @@ async function answerQuestion(userId: number, questionId: number, answer: string
 }
 
 async function findClearQuestions(): Promise<Question[]> {
-    const result = await connection.query(`SELECT * FROM questions WHERE answered = false`);
+    const result = await connection.query(`
+        SELECT
+        id,
+        question,
+        student,
+        class,
+        tags,
+        answered,
+        "submitAt"
+        FROM questions WHERE answered = false`);
 
     return result.rows;
 }

@@ -14,7 +14,7 @@ async function signUp(req: Request, res: Response) {
       return res.sendStatus(422);
     }
 
-    res.status(201).send(token);
+    res.status(201).send({token});
   } catch (e) {
     console.log(e);
     res.sendStatus(500);

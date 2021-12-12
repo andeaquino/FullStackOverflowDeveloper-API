@@ -12,13 +12,13 @@ async function createQuestion(req: Request, res: Response) {
 
     if (!question || !student || !group || !tags) return res.sendStatus(400);
 
-    const id = await questionRespository.createQuestion({question, student, group, tags});
+    const id = await questionRespository.createQuestion({ question, student, group, tags });
 
     if (id === null) {
       return res.sendStatus(422);
     }
 
-    res.status(201).send(id);
+    res.status(201).send({id});
   } catch (e) {
     console.log(e);
     res.sendStatus(500);
@@ -30,7 +30,7 @@ async function findQuestionByID(req: Request, res: Response) {
   try {
     const id  = Number(req.params.id);
 
-    const question = await questionRespository.findQuestionByID(id);
+      const question = await questionRespository.findQuestionByID(id);
       
     if (question === null) {
       return res.sendStatus(404);
@@ -47,7 +47,7 @@ async function answerQuestion(req: UserInfoRequest, res: Response) {
     try {
         const userId = req.userId;
         const questionId = Number(req.params.id);
-        const answer = req.body;
+        const answer = req.body.answer;
          
         if (!answer) return res.sendStatus(400);
 
