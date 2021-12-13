@@ -1,5 +1,5 @@
-import "./setup";
-import app from "./app";
+import './setup';
+import app from './app';
 
 const port = +process.env.PORT || 4000;
 

@@ -1,5 +1,5 @@
-import jwt from "jsonwebtoken";
-import * as userRepository from "../repositories/userRepository";
+import jwt from 'jsonwebtoken';
+import * as userRepository from '../repositories/userRepository';
 
 interface User {
     name: string;
@@ -7,17 +7,16 @@ interface User {
 }
 
 async function createUser(user: User) {
-    
-    const result = await userRepository.createUser(user);
-    
-    const token = jwt.sign(
+  const result = await userRepository.createUser(user);
+
+  const token = jwt.sign(
     {
       user: result.id,
     },
-    process.env.JWT_SECRET
-    );
-    
-    return  token;
+    process.env.JWT_SECRET,
+  );
+
+  return token;
 }
 
 export { createUser };
