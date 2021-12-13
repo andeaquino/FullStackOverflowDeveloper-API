@@ -1,24 +1,27 @@
-import { Request, Response } from "express";
-import * as questionRespository from "../repositories/questionRepository";
+import { Request, Response } from 'express';
+import * as questionRespository from '../repositories/questionRepository';
 
 interface UserInfoRequest extends Request {
     userId: number;
 }
 
 async function createQuestion(req: Request, res: Response) {
-
   try {
-    const { question, student, class: group, tags } = req.body;
+    const {
+      question, student, class: group, tags,
+    } = req.body;
 
     if (!question || !student || !group || !tags) return res.sendStatus(400);
 
-    const id = await questionRespository.createQuestion({ question, student, group, tags });
+    const id = await questionRespository.createQuestion({
+      question, student, group, tags,
+    });
 
     if (id === null) {
       return res.sendStatus(422);
     }
 
-    res.status(201).send({id});
+    res.status(201).send({ id });
   } catch (e) {
     console.log(e);
     res.sendStatus(500);
@@ -26,12 +29,11 @@ async function createQuestion(req: Request, res: Response) {
 }
 
 async function findQuestionByID(req: Request, res: Response) {
-
   try {
-    const id  = Number(req.params.id);
+    const id = Number(req.params.id);
 
-      const question = await questionRespository.findQuestionByID(id);
-      
+    const question = await questionRespository.findQuestionByID(id);
+
     if (question === null) {
       return res.sendStatus(404);
     }
@@ -44,26 +46,25 @@ async function findQuestionByID(req: Request, res: Response) {
 }
 
 async function answerQuestion(req: UserInfoRequest, res: Response) {
-    try {
-        const userId = req.userId;
-        const questionId = Number(req.params.id);
-        const answer = req.body.answer;
-         
-        if (!answer) return res.sendStatus(400);
+  try {
+    const { userId } = req;
+    const questionId = Number(req.params.id);
+    const { answer } = req.body;
 
-        await questionRespository.answerQuestion(userId, questionId, answer)
-        res.sendStatus(200);
-    } catch (e) {
-        console.log(e);
-        res.sendStatus(500);
-    }
+    if (!answer) return res.sendStatus(400);
+
+    await questionRespository.answerQuestion(userId, questionId, answer);
+    res.sendStatus(200);
+  } catch (e) {
+    console.log(e);
+    res.sendStatus(500);
+  }
 }
 
 async function findClearQuestions(req: Request, res: Response) {
-
   try {
     const questions = await questionRespository.findClearQuestions();
-      
+
     res.send(questions);
   } catch (e) {
     console.log(e);
@@ -71,4 +72,6 @@ async function findClearQuestions(req: Request, res: Response) {
   }
 }
 
-export { createQuestion, findQuestionByID, findClearQuestions, answerQuestion };
+export {
+  createQuestion, findQuestionByID, findClearQuestions, answerQuestion,
+};

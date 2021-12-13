@@ -1,4 +1,4 @@
-import connection from "../database";
+import connection from '../database';
 
 interface CreateQuestion {
     question: string;
@@ -18,32 +18,37 @@ interface Question extends Omit<CreateQuestion, 'group'> {
 }
 
 async function createQuestion(questionInfo: CreateQuestion): Promise<number> {
-    const { question, student, group, tags } = questionInfo;
+  const {
+    question, student, group, tags,
+  } = questionInfo;
 
-    const result = await connection.query(`
+  const result = await connection.query(
+    `
         INSERT INTO questions (question, student, class, tags, answered, "submitAt") VALUES ($1, $2, $3, $4, false, NOW()) RETURNING id`,
-        [question, student, group, tags]
-    );
+    [question, student, group, tags],
+  );
 
-    return result.rows[0].id;
+  return result.rows[0].id;
 }
 
 async function isQuestionAnswered(id: number): Promise<boolean> {
-    const result = await connection.query(`
+  const result = await connection.query(
+    `
         SELECT * FROM questions WHERE id = $1`,
-        [id]
-    );
+    [id],
+  );
 
-    if (result.rows[0].answered) {
-        return true;
-    }
-    return false;
+  if (result.rows[0].answered) {
+    return true;
+  }
+  return false;
 }
 
 async function findQuestionByID(id: number): Promise<Question> {
-    const isAnswered = await isQuestionAnswered(id);
-    if (isAnswered) {
-        const result = await connection.query(`
+  const isAnswered = await isQuestionAnswered(id);
+  if (isAnswered) {
+    const result = await connection.query(
+      `
             SELECT
             questions.*,
             users.name AS "answeredBy"
@@ -51,12 +56,13 @@ async function findQuestionByID(id: number): Promise<Question> {
             JOIN users
             ON users.id = questions."answeredBy"
             WHERE questions.id = $1`,
-            [id]
-        );
-        return result.rows[0];
-    }
-    
-    const result = await connection.query(`
+      [id],
+    );
+    return result.rows[0];
+  }
+
+  const result = await connection.query(
+    `
         SELECT
         id,
         question,
@@ -66,25 +72,26 @@ async function findQuestionByID(id: number): Promise<Question> {
         answered,
         "submitAt"
         FROM questions WHERE id = $1`,
-        [id]
-    );
-    return result.rows[0];
+    [id],
+  );
+  return result.rows[0];
 }
 
 async function answerQuestion(userId: number, questionId: number, answer: string) {
-    await connection.query(`
+  await connection.query(
+    `
         UPDATE questions SET
         answered = true,
         "answeredAt" = NOW(),
         "answeredBy" = $1,
         answer = $2
         WHERE id = $3`,
-        [userId, answer, questionId]
-    );
+    [userId, answer, questionId],
+  );
 }
 
 async function findClearQuestions(): Promise<Question[]> {
-    const result = await connection.query(`
+  const result = await connection.query(`
         SELECT
         id,
         question,
@@ -95,7 +102,9 @@ async function findClearQuestions(): Promise<Question[]> {
         "submitAt"
         FROM questions WHERE answered = false`);
 
-    return result.rows;
+  return result.rows;
 }
 
-export { createQuestion, findQuestionByID, answerQuestion, findClearQuestions };
+export {
+  createQuestion, findQuestionByID, answerQuestion, findClearQuestions,
+};
