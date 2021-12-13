@@ -100,7 +100,8 @@ async function findClearQuestions(): Promise<Question[]> {
         tags,
         answered,
         "submitAt"
-        FROM questions WHERE answered = false`);
+        FROM questions WHERE answered = false
+  `);
 
   return result.rows;
 }
